@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootstrap 101 Template</title>
+<link href="plugins/bootstrap-3.3.7/css/bootstrap.min.css"
+	rel="stylesheet">
+<link href="plugins/bootstrap-table/bootstrap-table.min.css"
+	rel="stylesheet">
+<script src="plugins/jquery/jquery-3.3.1.min.js"></script>
+<script src="plugins/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="plugins/bootstrap-table/bootstrap-table-locale-all.min.js"></script>
+<script type="text/javascript">
+      $(function() {
+        <!--初始化表格的样式 -->
+         $('#table').bootstrapTable({
+           columns : [ {
+              field : 'uid',
+              title : '用户id'
+           }, {
+              field : 'text',
+              title : '微博文章'
+           }, {
+              field : 'source',
+              title : '来源'
+           }, {
+              field : 'created_at',
+              title : '创建时间'
+           } ]
+        });
+        //为submit按钮绑定click事件,填充点击查询后的数据查询
+         $("#submit").click(function() {
+           $.ajax({
+              url : 'search',
+              data : "mid=" + $("#mid").val(),
+              cache : false,//false是不缓存，true为缓存
+              async : true,//true为异步，false为同步
+              beforeSend : function() {
+                 //请求前
+              },
+              success : function(result) {
+                 try {
+                   var resultArray = new Array();
+                    resultArray[0] = JSON.parse(result);
+                    $("#table").bootstrapTable('load', resultArray);
+                 } catch (e) {
+                    window.alert(result);
+                    $("#table").bootstrapTable('load', [ {
+                      "result" : "什么也没有找到"
+                   } ]);
+                 }
+              },
+              complete : function() {
+                 //请求结束时
+              },
+              error : function() {
+                 //请求失败时
+              }
+           })
+        });
+      });
+   </script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<!-- onsubmit设置成return false,不再显式提交form -->
+			<div class="col-md-8 col-md-offset-2 text-center"
+				onsubmit="return false">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="mid">mid值</label> <input type="text"
+							class="form-control" id="mid" name="mid" placeholder="请输入mid">
+					</div>
+					<button type="submit" id="submit" class="btn btn-primary">查询</button>
+				</form>
+			</div>
+		</div>
+		<!-- 在下一行中，添加一个bs系统自带的表格 -->
+		<div class="row">
+			<table id="table"></table>
+		</div>
+	</div>
+</body>
+</html>
